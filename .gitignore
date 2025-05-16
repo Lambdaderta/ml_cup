@@ -25,6 +25,8 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+dataset.csv
+geo-reviews-dataset-2023.tskv
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Recommendations</title>
+    <style>
+        :root {
+            --primary: #673ab7;
+            --secondary: #512da8;
+            --surface: #ffffff;
+            --background: #f0f2f5;
+            --text: #333333;
+            --muted: #6c757d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            line-height: 1.6;
+            background-color: var(--background);
+            color: var(--text);
+            padding: 2rem;
+        }
+
+        h1 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 2.5rem;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .form-card {
+            background: var(--surface);
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--muted);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            transition: border-color 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            transform: scale(1.2);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+            display: block;
+            width: 100%;
+            max-width: 200px;
+            margin: 0 auto;
+        }
+
+        .btn:hover {
+            background: var(--secondary);
+        }
+
+        .result-list {
+            list-style: none;
+            padding: 0;
+            margin: 2rem 0;
+        }
+
+        .result-item {
+            background: var(--surface);
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: transform 0.2s ease;
+        }
+
+        .result-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .result-item strong {
+            color: var(--primary);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .similarity-score {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .form-group {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Рекомендации отелей по отзывам</h1>
+        
+        <div class="form-card">
+            <form method="post">
+                <div class="form-group">
+                    <label for="city">Город:</label>
+                    <input list="cities" name="city" id="city" required class="form-control">
+                    <datalist id="cities">
+                        {% for city in cities %}
+                        <option value="{{city}}">
+                        {% endfor %}
+                    </datalist>
+                </div>
+
+                <div class="form-group">
+                    <label>Рейтинг:</label>
+                    <div class="checkbox-group">
+                        {% for i in range(6) %}
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="rating" value="{{ i }}" id="rating-{{i}}">
+                            <label for="rating-{{i}}">{{i}}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Описание:</label>
+                    <textarea id="description" name="description" rows="4" class="form-control" required></textarea>
+                </div>
+
+                <button type="submit" class="btn">Получить рекомендации</button>
+            </form>
+        </div>
+
+        {% if results is not none %}
+        <div class="result-list">
+            <h2>Рекомендуемые отели:</h2>
+            {% for result in results %}
+            <div class="result-item">
+                <strong>{{ result.name_ru }} <small>(рейтинг: {{result.rating}})</small></strong>
+                <div class="similarity-score">Коэффициент сходства: {{ result.similarity | round(2) }}</div>
+                <div class="address">{{ result.address }}</div>
+                <div class="review">{{ result.text }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
